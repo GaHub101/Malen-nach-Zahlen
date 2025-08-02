@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kinder Malprogramm</title>
+  <style>
+    body {
+      background: #fefae0;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 1em;
+    }
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1em;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .choice {
+      font-size: 1.5em;
+      padding: 1em;
+      background: #faedcd;
+      border: 3px solid #ccc;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .choice:hover {
+      background: #fcbf49;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 Wähle, was du malen willst!</h1>
+  <div class="button-grid">
+    <a class="choice" href="malen.html">🖌️ Freies Malen</a>
+    <a class="choice" href="malen.html?vorlage=katze">🐱 Katze ausmalen</a>
+    <a class="choice" href="malen.html?vorlage=auto">🚗 Auto ausmalen</a>
+    <a class="choice" href="malen.html?vorlage=blume">🌸 Blume ausmalen</a>
+  </div>
+</body>
+</html>
