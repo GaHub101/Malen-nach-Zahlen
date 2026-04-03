@@ -2,120 +2,337 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Male dein Bild</title>
   <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
     body {
       text-align: center;
       background: #fefae0;
       margin: 0;
+      padding: 0.5em;
+      font-family: sans-serif;
+      user-select: none;
     }
+
+    h1 { margin: 0.3em 0; font-size: 1.6em; }
+
     #toolbar {
-      padding: 1em;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4em;
+      padding: 0.6em;
       background: #faedcd;
+      border-radius: 12px;
+      margin-bottom: 0.6em;
     }
+
     .color-btn {
-      width: 40px;
-      height: 40px;
-      border: 2px solid #ccc;
+      width: 36px;
+      height: 36px;
+      border: 3px solid #ccc;
       border-radius: 50%;
-      margin: 0 5px;
+      cursor: pointer;
+      transition: transform 0.1s, border-color 0.1s;
+      flex-shrink: 0;
+    }
+
+    .color-btn:hover { transform: scale(1.15); }
+
+    .color-btn.active {
+      border-color: #333;
+      border-width: 3px;
+      transform: scale(1.2);
+      box-shadow: 0 0 0 2px #333;
+    }
+
+    #eraser-btn {
+      width: 36px;
+      height: 36px;
+      border: 3px solid #ccc;
+      border-radius: 50%;
+      cursor: pointer;
+      background: white;
+      font-size: 18px;
+      line-height: 30px;
+      transition: transform 0.1s, border-color 0.1s;
+      flex-shrink: 0;
+    }
+
+    #eraser-btn:hover { transform: scale(1.15); }
+    #eraser-btn.active {
+      border-color: #333;
+      box-shadow: 0 0 0 2px #333;
+      transform: scale(1.2);
+    }
+
+    .separator {
+      width: 2px;
+      height: 36px;
+      background: #ccc;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .tool-btn {
+      padding: 8px 14px;
+      font-size: 15px;
+      cursor: pointer;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background: #fff;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .tool-btn:hover { background: #fcbf49; }
+
+    #brush-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
+      font-size: 14px;
+    }
+
+    #brush-size {
+      width: 80px;
       cursor: pointer;
     }
-    #clear, #save {
-      padding: 10px 20px;
-      margin: 0 10px;
-      font-size: 16px;
-      cursor: pointer;
+
+    #canvas-wrapper {
+      display: inline-block;
+      position: relative;
     }
+
     canvas {
+      display: block;
       border: 2px solid #333;
+      border-radius: 4px;
       touch-action: none;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
+      max-width: 100%;
+      cursor: crosshair;
     }
+
+    #back-link {
+      display: inline-block;
+      margin-top: 0.6em;
+      font-size: 15px;
+      color: #666;
+      text-decoration: none;
+    }
+
+    #back-link:hover { color: #333; }
   </style>
 </head>
 <body>
   <h1>🎨 Male dein Bild!</h1>
-  <div id="toolbar">
-    <button class="color-btn" style="background:red;" data-color="red"></button>
-    <button class="color-btn" style="background:blue;" data-color="blue"></button>
-    <button class="color-btn" style="background:green;" data-color="green"></button>
-    <button class="color-btn" style="background:yellow;" data-color="yellow"></button>
-    <button class="color-btn" style="background:black;" data-color="black"></button>
-    <button class="color-btn" style="background:white;" data-color="white" title="Radierer"></button>
-    <button id="clear">🧹 Löschen</button>
-    <button id="save">💾 Speichern</button>
+
+  <div id="toolbar" role="toolbar" aria-label="Zeichenwerkzeuge">
+
+    <!-- Farben -->
+    <button class="color-btn active" style="background:#e63946" data-color="#e63946" aria-label="Rot" title="Rot"></button>
+    <button class="color-btn" style="background:#f4a261" data-color="#f4a261" aria-label="Orange" title="Orange"></button>
+    <button class="color-btn" style="background:#e9c46a" data-color="#e9c46a" aria-label="Gelb" title="Gelb"></button>
+    <button class="color-btn" style="background:#2a9d8f" data-color="#2a9d8f" aria-label="Türkis" title="Türkis"></button>
+    <button class="color-btn" style="background:#457b9d" data-color="#457b9d" aria-label="Blau" title="Blau"></button>
+    <button class="color-btn" style="background:#6a4c93" data-color="#6a4c93" aria-label="Lila" title="Lila"></button>
+    <button class="color-btn" style="background:#2d6a4f" data-color="#2d6a4f" aria-label="Grün" title="Grün"></button>
+    <button class="color-btn" style="background:#f08080" data-color="#f08080" aria-label="Rosa" title="Rosa"></button>
+    <button class="color-btn" style="background:#795548" data-color="#795548" aria-label="Braun" title="Braun"></button>
+    <button class="color-btn" style="background:#222" data-color="#222" aria-label="Schwarz" title="Schwarz"></button>
+
+    <div class="separator"></div>
+
+    <!-- Radierer -->
+    <button id="eraser-btn" aria-label="Radierer" title="Radierer">🧽</button>
+
+    <div class="separator"></div>
+
+    <!-- Pinselgröße -->
+    <div id="brush-row" aria-label="Pinselgröße">
+      <span>🖌️</span>
+      <input type="range" id="brush-size" min="2" max="40" value="8"
+             aria-label="Pinselgröße">
+      <span id="brush-label">8</span>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- Aktionen -->
+    <button class="tool-btn" id="undo-btn" aria-label="Rückgängig" title="Rückgängig (Strg+Z)">↩️</button>
+    <button class="tool-btn" id="clear" aria-label="Alles löschen" title="Alles löschen">🧹</button>
+    <button class="tool-btn" id="save" aria-label="Bild speichern" title="Bild speichern">💾</button>
   </div>
-  <canvas id="drawing" width="800" height="500"></canvas>
+
+  <div id="canvas-wrapper">
+    <canvas id="drawing" width="800" height="500"></canvas>
+  </div>
+
+  <br>
+  <a id="back-link" href="index.html">← Zurück zur Auswahl</a>
 
   <script>
     const canvas = document.getElementById("drawing");
     const ctx = canvas.getContext("2d");
 
-    // Vorlage per URL-Parameter laden
+    // ── Vorlage per URL-Parameter auf Canvas zeichnen ──────────────────────
     const params = new URLSearchParams(window.location.search);
     const vorlage = params.get("vorlage");
     if (vorlage) {
-      canvas.style.backgroundImage = `url('vorlagen/${vorlage}.png')`;
-      canvas.style.opacity = 0.95;
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        saveState(); // Vorlage als erster Undo-Schritt
+      };
+      img.onerror = () => console.warn(`Vorlage "${vorlage}" nicht gefunden.`);
+      img.src = `vorlagen/${vorlage}.png`;
     }
 
+    // ── Zustands-Variablen ──────────────────────────────────────────────────
     let drawing = false;
-    let currentColor = "black";
+    let currentColor = "#222";
+    let isEraser = false;
+    let brushSize = 8;
+    let lastPos = null;
 
-    document.querySelectorAll(".color-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        currentColor = btn.dataset.color;
-      });
-    });
+    // ── Undo-Verlauf ────────────────────────────────────────────────────────
+    const history = [];
+    const MAX_HISTORY = 30;
 
-    canvas.addEventListener("mousedown", start);
-    canvas.addEventListener("touchstart", start, { passive: false });
+    function saveState() {
+      history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+      if (history.length > MAX_HISTORY) history.shift();
+    }
 
-    canvas.addEventListener("mousemove", draw);
-    canvas.addEventListener("touchmove", draw, { passive: false });
+    // Anfangszustand speichern
+    saveState();
 
-    canvas.addEventListener("mouseup", stop);
-    canvas.addEventListener("mouseout", stop);
-    canvas.addEventListener("touchend", stop);
+    // ── Hilfsfunktionen ─────────────────────────────────────────────────────
 
+    // Koordinaten korrekt skaliert (CSS-Größe ≠ interne Canvas-Größe)
     function getPos(e) {
       if (e.touches) e = e.touches[0];
       const rect = canvas.getBoundingClientRect();
       return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
+        x: (e.clientX - rect.left) * (canvas.width  / rect.width),
+        y: (e.clientY - rect.top)  * (canvas.height / rect.height)
       };
     }
 
+    function applyTool() {
+      ctx.lineWidth  = brushSize;
+      ctx.lineCap    = "round";
+      ctx.lineJoin   = "round";
+      if (isEraser) {
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.strokeStyle = "rgba(0,0,0,1)";
+      } else {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = currentColor;
+      }
+    }
+
+    // ── Zeichnen ─────────────────────────────────────────────────────────────
     function start(e) {
+      e.preventDefault();
       drawing = true;
-      draw(e);
+      const pos = getPos(e);
+      lastPos = pos;
+      applyTool();
+      // Punkt bei Klick ohne Bewegung
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, brushSize / 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
     }
 
     function draw(e) {
       if (!drawing) return;
       e.preventDefault();
       const pos = getPos(e);
-      ctx.fillStyle = currentColor;
+      applyTool();
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
       ctx.beginPath();
-      ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(pos.x, pos.y);
+      lastPos = pos;
     }
 
     function stop() {
+      if (!drawing) return;
       drawing = false;
+      ctx.beginPath(); // Pfad zurücksetzen
+      ctx.globalCompositeOperation = "source-over";
+      saveState();
     }
 
-    document.getElementById("clear").addEventListener("click", () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.addEventListener("mousedown",  start);
+    canvas.addEventListener("touchstart", start, { passive: false });
+    canvas.addEventListener("mousemove",  draw);
+    canvas.addEventListener("touchmove",  draw, { passive: false });
+    canvas.addEventListener("mouseup",    stop);
+    canvas.addEventListener("mouseleave", stop);
+    canvas.addEventListener("touchend",   stop);
+
+    // ── Farb-Buttons ─────────────────────────────────────────────────────────
+    const colorBtns = document.querySelectorAll(".color-btn");
+    colorBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        currentColor = btn.dataset.color;
+        isEraser = false;
+        colorBtns.forEach(b => b.classList.remove("active"));
+        document.getElementById("eraser-btn").classList.remove("active");
+        btn.classList.add("active");
+      });
     });
 
+    // ── Radierer ─────────────────────────────────────────────────────────────
+    document.getElementById("eraser-btn").addEventListener("click", () => {
+      isEraser = !isEraser;
+      colorBtns.forEach(b => b.classList.remove("active"));
+      document.getElementById("eraser-btn").classList.toggle("active", isEraser);
+    });
+
+    // ── Pinselgröße ──────────────────────────────────────────────────────────
+    const brushInput = document.getElementById("brush-size");
+    const brushLabel = document.getElementById("brush-label");
+    brushInput.addEventListener("input", () => {
+      brushSize = parseInt(brushInput.value, 10);
+      brushLabel.textContent = brushSize;
+    });
+
+    // ── Undo ─────────────────────────────────────────────────────────────────
+    document.getElementById("undo-btn").addEventListener("click", undoAction);
+
+    document.addEventListener("keydown", e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+        e.preventDefault();
+        undoAction();
+      }
+    });
+
+    function undoAction() {
+      if (history.length <= 1) return;
+      history.pop(); // aktuellen Zustand verwerfen
+      ctx.putImageData(history[history.length - 1], 0, 0);
+    }
+
+    // ── Löschen ───────────────────────────────────────────────────────────────
+    document.getElementById("clear").addEventListener("click", () => {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      saveState();
+    });
+
+    // ── Speichern ─────────────────────────────────────────────────────────────
     document.getElementById("save").addEventListener("click", () => {
       const link = document.createElement("a");
-      link.download = "mein_bild.png";
+      const ts = new Date().toISOString().slice(0, 10);
+      link.download = `mein_bild_${ts}.png`;
       link.href = canvas.toDataURL();
       link.click();
     });
