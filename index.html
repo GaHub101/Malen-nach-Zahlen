@@ -2,46 +2,62 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kinder Malprogramm</title>
   <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
     body {
       background: #fefae0;
       font-family: sans-serif;
       text-align: center;
-      padding: 2em;
+      padding: 2em 1em;
+      margin: 0;
     }
+
     h1 {
-      font-size: 2em;
+      font-size: clamp(1.4em, 5vw, 2em);
       margin-bottom: 1em;
     }
+
     .button-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 1em;
       max-width: 600px;
       margin: 0 auto;
     }
+
     .choice {
-      font-size: 1.5em;
+      display: block;
+      font-size: clamp(1.1em, 4vw, 1.5em);
       padding: 1em;
       background: #faedcd;
       border: 3px solid #ccc;
       border-radius: 20px;
       cursor: pointer;
-      transition: 0.2s;
+      transition: background 0.2s, transform 0.1s;
+      text-decoration: none;
+      color: inherit;
     }
+
     .choice:hover {
       background: #fcbf49;
+      transform: scale(1.03);
+    }
+
+    .choice:active {
+      transform: scale(0.97);
     }
   </style>
 </head>
 <body>
   <h1>🎨 Wähle, was du malen willst!</h1>
-  <div class="button-grid">
-    <a class="choice" href="malen.html">🖌️ Freies Malen</a>
-    <a class="choice" href="malen.html?vorlage=katze">🐱 Katze ausmalen</a>
-    <a class="choice" href="malen.html?vorlage=auto">🚗 Auto ausmalen</a>
-    <a class="choice" href="malen.html?vorlage=blume">🌸 Blume ausmalen</a>
+  <div class="button-grid" role="list">
+    <a class="choice" href="malen.html" role="listitem">🖌️ Freies Malen</a>
+    <a class="choice" href="malen.html?vorlage=katze" role="listitem">🐱 Katze ausmalen</a>
+    <a class="choice" href="malen.html?vorlage=auto" role="listitem">🚗 Auto ausmalen</a>
+    <a class="choice" href="malen.html?vorlage=blume" role="listitem">🌸 Blume ausmalen</a>
   </div>
 </body>
 </html>
